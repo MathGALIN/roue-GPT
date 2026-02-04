@@ -55,6 +55,47 @@ La base de données exclut volontairement les blockbusters mainstream et se conc
 | Polices | Google Fonts — Space Grotesk, Inter |
 | Dépendances | **Aucune** |
 
+## Curation IA & Feedback communautaire
+
+Le dossier `IA/` contient un système de curation intelligent qui permet de **régénérer entièrement la collection de 100 films via une IA** (Claude, GPT, etc.), tout en s'adaptant aux retours de la communauté.
+
+### Comment ça fonctionne
+
+```
+Communauté regarde les films
+        ↓
+Feedback noté dans IA/feedback.md
+  (genres aimés, époques préférées, pays favoris...)
+        ↓
+L'IA lit le feedback + le prompt IA/generate-films.md
+        ↓
+Génération d'une nouvelle liste de 100 films adaptée
+        ↓
+Écriture dans data/films.json
+        ↓
+La roue se renouvelle automatiquement
+```
+
+### Fichiers du système IA
+
+| Fichier | Rôle |
+|---------|------|
+| `IA/generate-films.md` | Prompt complet pour l'agent IA : critères de sélection, quotas de diversité (époques, genres, pays, types), format JSON, et instructions d'adaptation au feedback |
+| `IA/feedback.md` | Journal de feedback communautaire : les utilisateurs y notent les films aimés/détestés, leurs préférences de genre, d'époque et de format |
+| `IA/init.txt` | Paramètres d'initialisation pour la première génération (sélection équilibrée sans biais) |
+
+### Règles de curation
+
+L'IA respecte des **quotas stricts** pour garantir la diversité :
+
+- **50/50** : 50 films live-action, 50 animés (anime + animation)
+- **Couverture temporelle** : de avant 1960 jusqu'à 2025
+- **30+ pays** représentés sur tous les continents
+- **16 genres** couverts minimum
+- **Adaptation** : si la communauté adore un genre, sa proportion augmente ; si elle en déteste un, il diminue (sans jamais disparaître)
+
+La collection n'est donc jamais figée — elle évolue avec les goûts de la communauté tout en maintenant une diversité maximale.
+
 ## Structure du projet
 
 ```
@@ -67,7 +108,9 @@ roue-gpt/
 ├── data/
 │   └── films.json      # Schéma de la base de films
 └── IA/
-    └── generate-films.md   # Prompt IA pour la curation de la collection
+    ├── generate-films.md   # Prompt IA pour la curation de la collection
+    ├── feedback.md         # Retours communautaires pour affiner la sélection
+    └── init.txt            # Paramètres de première génération
 ```
 
 ## Design visuel
