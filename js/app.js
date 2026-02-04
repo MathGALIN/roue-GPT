@@ -1,5 +1,5 @@
 // ============================================================
-// ROUE GPT — Application principale
+// ROUE GPT — Application principale (v2 - Premium UI)
 // ============================================================
 
 // Données films intégrées (évite les problèmes CORS en file://)
@@ -1306,12 +1306,144 @@ const FILMS_DATA = [
   }
 ];
 
+// ============================================================
+// Particle System
+// ============================================================
+class ParticleSystem {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.running = true;
+        this.resize();
+        this.init();
+        window.addEventListener('resize', () => this.resize());
+    }
+
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+
+    init() {
+        const count = Math.min(60, Math.floor(window.innerWidth / 25));
+        this.particles = [];
+        for (let i = 0; i < count; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                size: Math.random() * 2 + 0.5,
+                opacity: Math.random() * 0.3 + 0.05,
+                hue: Math.random() > 0.7 ? 45 : Math.random() > 0.5 ? 270 : 190,
+            });
+        }
+        this.animate();
+    }
+
+    animate() {
+        if (!this.running) return;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        for (const p of this.particles) {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0) p.x = this.canvas.width;
+            if (p.x > this.canvas.width) p.x = 0;
+            if (p.y < 0) p.y = this.canvas.height;
+            if (p.y > this.canvas.height) p.y = 0;
+
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            this.ctx.fillStyle = `hsla(${p.hue}, 60%, 70%, ${p.opacity})`;
+            this.ctx.fill();
+        }
+
+        // Connection lines
+        for (let i = 0; i < this.particles.length; i++) {
+            for (let j = i + 1; j < this.particles.length; j++) {
+                const a = this.particles[i];
+                const b = this.particles[j];
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 120) {
+                    const opacity = (1 - dist / 120) * 0.08;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(a.x, a.y);
+                    this.ctx.lineTo(b.x, b.y);
+                    this.ctx.strokeStyle = `rgba(240, 192, 64, ${opacity})`;
+                    this.ctx.lineWidth = 0.5;
+                    this.ctx.stroke();
+                }
+            }
+        }
+
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
+// ============================================================
+// Confetti System
+// ============================================================
+class ConfettiSystem {
+    constructor() {
+        this.colors = ['#f0c040', '#e84057', '#8b5cf6', '#06b6d4', '#4ade80', '#f97316', '#ec4899', '#ffd700'];
+    }
+
+    burst(count = 80) {
+        const container = document.getElementById('confetti-canvas');
+        if (!container) return;
+
+        for (let i = 0; i < count; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+
+            const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+            const size = Math.random() * 10 + 5;
+            const x = 40 + Math.random() * 20;
+            const drift = (Math.random() - 0.5) * 200;
+            const duration = 2 + Math.random() * 2;
+            const delay = Math.random() * 0.3;
+            const shapes = ['circle', 'rect', 'triangle'];
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+
+            piece.style.cssText = `
+                left: ${x}%;
+                top: -5%;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${color};
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+                border-radius: ${shape === 'circle' ? '50%' : shape === 'rect' ? '2px' : '0'};
+                ${shape === 'triangle' ? `clip-path: polygon(50% 0%, 0% 100%, 100% 100%); background: ${color};` : ''}
+                --drift: ${drift}px;
+            `;
+
+            piece.style.animation = `confetti-fall ${duration}s ${delay}s linear forwards`;
+            piece.style.setProperty('--x-drift', `${drift}px`);
+
+            container.appendChild(piece);
+
+            setTimeout(() => piece.remove(), (duration + delay) * 1000 + 100);
+        }
+    }
+}
+
+// ============================================================
+// Main Application
+// ============================================================
 class RoueGPT {
     constructor() {
         this.films = [];
         this.availableFilms = [];
         this.isSpinning = false;
         this.currentAngle = 0;
+        this.confetti = new ConfettiSystem();
 
         // Segments de la roue
         this.segments = [
@@ -1348,6 +1480,27 @@ class RoueGPT {
         await this.loadFilms();
         this.drawWheel();
         this.bindEvents();
+
+        // Start idle animations
+        this.setIdle(true);
+
+        // Start particle system
+        const particlesCanvas = document.getElementById('particles-canvas');
+        if (particlesCanvas) {
+            new ParticleSystem(particlesCanvas);
+        }
+    }
+
+    // ---- Idle animations ----
+    setIdle(idle) {
+        const pointer = document.querySelector('.wheel-pointer');
+        if (idle) {
+            this.canvas.classList.add('idle');
+            pointer.classList.add('idle');
+        } else {
+            this.canvas.classList.remove('idle');
+            pointer.classList.remove('idle');
+        }
     }
 
     // ---- Canvas setup (retina) ----
@@ -1369,13 +1522,13 @@ class RoueGPT {
         this.availableFilms = [...this.films];
     }
 
-    // ---- Draw wheel ----
+    // ---- Draw wheel (Premium version) ----
     drawWheel() {
         const ctx = this.ctx;
         const cx = this.size / 2;
         const cy = this.size / 2;
-        const outerR = cx - 6;
-        const innerR = 30;
+        const outerR = cx - 8;
+        const innerR = 32;
         const segCount = this.segments.length;
         const arc = (2 * Math.PI) / segCount;
 
@@ -1390,79 +1543,126 @@ class RoueGPT {
             const end = start + arc;
             const seg = this.segments[i];
 
-            // Filled segment
+            // Gradient fill
+            const midAngle = start + arc / 2;
+            const gx = Math.cos(midAngle) * outerR * 0.5;
+            const gy = Math.sin(midAngle) * outerR * 0.5;
+            const gradient = ctx.createLinearGradient(0, 0, gx, gy);
+            gradient.addColorStop(0, this.adjustColor(seg.color, 0.8));
+            gradient.addColorStop(1, seg.color);
+
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.arc(0, 0, outerR, start, end);
             ctx.closePath();
-            ctx.fillStyle = seg.color;
+            ctx.fillStyle = gradient;
             ctx.fill();
 
-            // Border
-            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-            ctx.lineWidth = 1.5;
+            // Segment border
+            ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+            ctx.lineWidth = 1;
             ctx.stroke();
+
+            // Inner highlight
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, outerR, start, end);
+            ctx.closePath();
+            const highlightGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, outerR);
+            highlightGrad.addColorStop(0, 'rgba(255,255,255,0.12)');
+            highlightGrad.addColorStop(0.5, 'rgba(255,255,255,0.03)');
+            highlightGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = highlightGrad;
+            ctx.fill();
 
             // Label
             ctx.save();
             ctx.rotate(start + arc / 2);
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#fff';
-            ctx.font = `600 ${Math.max(10, this.size * 0.028)}px "Space Grotesk", sans-serif`;
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 3;
-            ctx.fillText(seg.label, outerR - 14, 0);
+            ctx.fillStyle = 'rgba(255,255,255,0.95)';
+            ctx.font = `600 ${Math.max(10, this.size * 0.03)}px "Space Grotesk", sans-serif`;
+            ctx.shadowColor = 'rgba(0,0,0,0.6)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+            ctx.fillText(seg.label, outerR - 16, 0);
             ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
             ctx.restore();
         }
 
-        // Outer ring
+        // Outer ring glow
         ctx.beginPath();
-        ctx.arc(0, 0, outerR, 0, 2 * Math.PI);
-        ctx.strokeStyle = 'rgba(240, 192, 64, 0.3)';
-        ctx.lineWidth = 3;
+        ctx.arc(0, 0, outerR + 1, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'rgba(240, 192, 64, 0.25)';
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
         // Tick marks
         for (let i = 0; i < segCount * 3; i++) {
             const angle = (i / (segCount * 3)) * 2 * Math.PI - Math.PI / 2;
+            const isMajor = i % 3 === 0;
             ctx.save();
             ctx.rotate(angle);
             ctx.beginPath();
-            ctx.moveTo(outerR - 6, 0);
+            ctx.moveTo(outerR - (isMajor ? 8 : 4), 0);
             ctx.lineTo(outerR, 0);
-            ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = isMajor ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+            ctx.lineWidth = isMajor ? 2 : 1;
             ctx.stroke();
             ctx.restore();
         }
 
-        // Center circle
+        // Center circle with gradient
+        const centerGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, innerR);
+        centerGrad.addColorStop(0, '#1a1a35');
+        centerGrad.addColorStop(1, '#0a0a18');
         ctx.beginPath();
         ctx.arc(0, 0, innerR, 0, 2 * Math.PI);
-        ctx.fillStyle = '#0e0e1a';
+        ctx.fillStyle = centerGrad;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(240, 192, 64, 0.6)';
-        ctx.lineWidth = 2.5;
+
+        // Center ring
+        ctx.beginPath();
+        ctx.arc(0, 0, innerR, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'rgba(240, 192, 64, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Inner center ring
+        ctx.beginPath();
+        ctx.arc(0, 0, innerR - 5, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'rgba(240, 192, 64, 0.15)';
+        ctx.lineWidth = 1;
         ctx.stroke();
 
         ctx.restore();
     }
 
-    // ---- Spin ----
+    // Adjust color brightness
+    adjustColor(hex, factor) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgb(${Math.round(r * factor)}, ${Math.round(g * factor)}, ${Math.round(b * factor)})`;
+    }
+
+    // ---- Spin (enhanced) ----
     spin() {
         if (this.isSpinning || this.availableFilms.length === 0) return;
         this.isSpinning = true;
 
+        this.setIdle(false);
         this.spinBtn.disabled = true;
         this.spinBtn.classList.add('spin-btn--spinning');
         this.spinBtn.querySelector('.spin-btn__text').textContent = 'EN COURS...';
         this.canvas.classList.add('spinning');
 
-        const extraTurns = 4 + Math.random() * 3; // 4-7 full turns
+        const extraTurns = 5 + Math.random() * 4; // 5-9 full turns
         const totalRotation = extraTurns * 360 + Math.random() * 360;
-        const duration = 4500 + Math.random() * 1500; // 4.5-6s
+        const duration = 5000 + Math.random() * 2000; // 5-7s
         const startAngle = this.currentAngle;
         const startTime = performance.now();
 
@@ -1474,8 +1674,8 @@ class RoueGPT {
             const elapsed = now - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            // easeOutQuart
-            const eased = 1 - Math.pow(1 - progress, 4);
+            // easeOutQuint for smoother deceleration
+            const eased = 1 - Math.pow(1 - progress, 5);
             this.currentAngle = startAngle + eased * totalRotation;
 
             // Pointer tick
@@ -1484,7 +1684,7 @@ class RoueGPT {
             if (currentSeg !== lastSegIndex) {
                 lastSegIndex = currentSeg;
                 pointer.classList.add('tick');
-                setTimeout(() => pointer.classList.remove('tick'), 80);
+                setTimeout(() => pointer.classList.remove('tick'), 70);
             }
 
             this.drawWheel();
@@ -1497,8 +1697,9 @@ class RoueGPT {
                 this.spinBtn.classList.remove('spin-btn--spinning');
                 this.spinBtn.disabled = false;
                 this.spinBtn.querySelector('.spin-btn__text').textContent = 'TOURNER LA ROUE';
+                this.setIdle(true);
 
-                setTimeout(() => this.selectFilm(), 400);
+                setTimeout(() => this.selectFilm(), 500);
             }
         };
 
@@ -1520,7 +1721,6 @@ class RoueGPT {
     getGenreColor(genre) {
         const map = {};
         this.segments.forEach(s => { map[s.label] = s.color; });
-        // Extras
         map['Science-fiction'] = map['Sci-fi'];
         map['Comédie noire'] = map['Comédie'];
         map['Drame romantique'] = map['Romance'];
@@ -1538,15 +1738,17 @@ class RoueGPT {
     showFilmCard(film) {
         const typeLabels = { film: 'Film', anime: 'Anime', animation: 'Animation' };
         const typeClass = `film-card__type--${film.type}`;
-
         const showOriginal = film.title !== film.titleFr;
+
+        // Rating bar width
+        const ratingPercent = (film.note / 10) * 100;
 
         this.filmCard.innerHTML = `
             <div class="film-card__header">
                 <button class="film-card__close" id="card-close">&times;</button>
                 <span class="film-card__type ${typeClass}">${typeLabels[film.type] || 'Film'}</span>
                 <div class="film-card__genres">
-                    ${film.genres.map(g => `<span class="genre-tag" style="border-color:${this.getGenreColor(g)}44; color:${this.getGenreColor(g)}">${g}</span>`).join('')}
+                    ${film.genres.map(g => `<span class="genre-tag" style="border-color:${this.getGenreColor(g)}33; color:${this.getGenreColor(g)}">${g}</span>`).join('')}
                 </div>
                 <h2 class="film-card__title">${film.titleFr}</h2>
                 ${showOriginal ? `<p class="film-card__original">${film.title}</p>` : '<div style="height:0.5rem"></div>'}
@@ -1569,8 +1771,9 @@ class RoueGPT {
             </div>
         `;
 
-        // Show overlay
+        // Show overlay with confetti
         this.overlay.classList.add('active');
+        setTimeout(() => this.confetti.burst(60), 200);
 
         // Bind card buttons
         document.getElementById('card-close').onclick = () => this.hideOverlay();

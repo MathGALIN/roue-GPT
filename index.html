@@ -11,34 +11,61 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 </head>
 <body>
+    <!-- Animated background -->
+    <div class="bg-effects">
+        <div class="bg-orb bg-orb--1"></div>
+        <div class="bg-orb bg-orb--2"></div>
+        <div class="bg-orb bg-orb--3"></div>
+        <canvas id="particles-canvas"></canvas>
+    </div>
+
     <div id="app" class="app">
         <header class="header">
-            <h1 class="header__title">ROUE <span class="highlight">GPT</span></h1>
+            <div class="header__badge">
+                <span class="header__badge-dot"></span>
+                100 films disponibles
+            </div>
+            <h1 class="header__title">
+                <span class="header__title-text">ROUE</span>
+                <span class="highlight">GPT</span>
+            </h1>
             <p class="header__subtitle">100 films cultes que vous n'avez probablement jamais vus</p>
             <p class="header__vf">Tous disponibles en VF</p>
         </header>
 
         <main class="main">
             <div class="wheel-section">
+                <div class="wheel-glow"></div>
                 <div class="wheel-container">
-                    <div class="wheel-pointer"></div>
+                    <div class="wheel-ring"></div>
+                    <div class="wheel-pointer">
+                        <svg viewBox="0 0 40 50" fill="none">
+                            <path d="M20 50 L0 0 L20 8 L40 0 Z" fill="url(#pointer-grad)"/>
+                            <defs>
+                                <linearGradient id="pointer-grad" x1="20" y1="0" x2="20" y2="50">
+                                    <stop offset="0%" stop-color="#ffd700"/>
+                                    <stop offset="100%" stop-color="#f0a030"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
                     <canvas id="wheel-canvas"></canvas>
                     <div class="wheel-center">
-                        <span>?</span>
+                        <span class="wheel-center__icon">?</span>
                     </div>
                 </div>
 
                 <button id="spin-btn" class="spin-btn">
+                    <span class="spin-btn__shimmer"></span>
                     <span class="spin-btn__text">TOURNER LA ROUE</span>
                 </button>
-
             </div>
         </main>
 
         <div id="overlay" class="overlay">
+            <div id="confetti-canvas"></div>
             <div id="film-card" class="film-card"></div>
         </div>
-
 
         <footer class="footer">
             <p>Films de tous genres, toutes epoques — Animation, Anime & Films inclus</p>
