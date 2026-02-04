@@ -1,98 +1,98 @@
 # Roue GPT
 
-> Discover hidden cinematic gems you've never heard of.
+> Découvre des pépites cinématographiques que tu n'as jamais vues.
 
-**Roue GPT** is an interactive film discovery wheel that surfaces 100 cult, underground, and critically-acclaimed films overlooked by mainstream audiences. Spin the wheel, land on a genre, and uncover a hidden masterpiece from world cinema.
+**Roue GPT** est une roue interactive de découverte de films cultes, underground et acclamés par la critique, mais ignorés du grand public. Tourne la roue, tombe sur un genre, et découvre un chef-d'oeuvre caché du cinéma mondial.
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
-![No Dependencies](https://img.shields.io/badge/Dependencies-None-brightgreen)
+![No Dependencies](https://img.shields.io/badge/Dépendances-Aucune-brightgreen)
 
 ---
 
-## Features
+## Fonctionnalités
 
-- **Interactive Spinning Wheel** — Canvas-rendered wheel with 16 genre segments, smooth easing animations, and pointer tick feedback
-- **100 Curated Films** — Hand-picked hidden gems spanning all continents, eras (1920s–2025), and formats (live-action, anime, animation)
-- **Premium UI/UX** — Glassmorphism design, floating particle system, confetti celebrations, and fluid responsive layout
-- **Zero Dependencies** — Built entirely with vanilla HTML5, CSS3, and ES6+ JavaScript
-- **Retina-Ready** — Canvas rendering adapts to high-DPI displays
+- **Roue interactive** — Roue rendue en Canvas avec 16 segments de genres, animations fluides et retour sonore du pointeur
+- **100 films sélectionnés** — Pépites triées sur le volet couvrant tous les continents, toutes les époques (1920–2025) et tous les formats (live-action, anime, animation)
+- **UI/UX premium** — Design glassmorphism, système de particules flottantes, confettis, et mise en page responsive
+- **Zéro dépendance** — Construit entièrement en HTML5, CSS3 et JavaScript ES6+ vanilla
+- **Retina-ready** — Le rendu Canvas s'adapte aux écrans haute résolution
 
-## How It Works
+## Comment ça marche
 
-1. Click **"TOURNER LA ROUE"** to spin the wheel
-2. The wheel decelerates over 5–7 seconds with realistic easing
-3. A film card appears with full details: title, director, year, country, IMDb rating, synopsis, and genre tags
-4. Choose **"Autre film"** to discover another film in the same genre, or **"J'ai trouvé !"** to confirm your pick
+1. Clique sur **"TOURNER LA ROUE"** pour lancer la roue
+2. La roue décélère sur 5 à 7 secondes avec un easing réaliste
+3. Une carte film apparaît avec tous les détails : titre, réalisateur, année, pays, note IMDb, synopsis et tags de genre
+4. Choisis **"Autre film"** pour découvrir un autre film du même genre, ou **"J'ai trouvé !"** pour valider ton choix
 
-## Film Collection
+## Collection de films
 
-The curated database deliberately excludes mainstream blockbusters and focuses on:
+La base de données exclut volontairement les blockbusters mainstream et se concentre sur :
 
-- Films from **30+ countries** across all continents
-- Underground cinema, festival darlings, and auteur works
-- Forgotten classics and regional masterpieces
-- Minimum **6.5/10 IMDb** rating
-- Balanced mix of live-action (~50), anime (~25), and animation (~25)
+- Des films de **30+ pays** sur tous les continents
+- Du cinéma underground, des sélections de festivals et des oeuvres d'auteur
+- Des classiques oubliés et des chefs-d'oeuvre régionaux
+- Note IMDb minimum de **6.5/10**
+- Un mix équilibré de live-action (~50), anime (~25) et animation (~25)
 
-### Genre Wheel
+### Genres de la roue
 
 | Genre | Genre | Genre | Genre |
 |-------|-------|-------|-------|
-| Sci-Fi | Drama | Thriller | Horror |
-| Anime | Animation | Comedy | Action |
-| Crime | Romance | Fantasy | War |
-| Western | Musical | Adventure | Historical |
+| Sci-Fi | Drame | Thriller | Horreur |
+| Anime | Animation | Comédie | Action |
+| Policier | Romance | Fantaisie | Guerre |
+| Western | Musical | Aventure | Historique |
 
-## Tech Stack
+## Stack technique
 
-| Layer | Technology |
-|-------|-----------|
+| Couche | Technologie |
+|--------|------------|
 | Structure | HTML5, Canvas API |
-| Styling | CSS3 (Variables, Keyframes, Glassmorphism, Flexbox/Grid) |
-| Logic | Vanilla JavaScript ES6+ (Classes, async/await, Canvas 2D) |
-| Fonts | Google Fonts — Space Grotesk, Inter |
-| Dependencies | **None** |
+| Style | CSS3 (Variables, Keyframes, Glassmorphism, Flexbox/Grid) |
+| Logique | JavaScript ES6+ vanilla (Classes, async/await, Canvas 2D) |
+| Polices | Google Fonts — Space Grotesk, Inter |
+| Dépendances | **Aucune** |
 
-## Project Structure
+## Structure du projet
 
 ```
 roue-gpt/
-├── index.html          # Main entry point
+├── index.html          # Point d'entrée principal
 ├── css/
-│   └── style.css       # Styling, animations, responsive design
+│   └── style.css       # Styles, animations, responsive design
 ├── js/
-│   └── app.js          # Core logic (wheel, particles, confetti, film data)
+│   └── app.js          # Logique principale (roue, particules, confettis, données films)
 ├── data/
-│   └── films.json      # Film database schema
+│   └── films.json      # Schéma de la base de films
 └── IA/
-    └── generate-films.md   # AI prompt for curating the film collection
+    └── generate-films.md   # Prompt IA pour la curation de la collection
 ```
 
-## Visual Design
+## Design visuel
 
-- **Background** — Animated floating orbs (gold, purple, cyan) with a particle network
-- **Wheel** — Radial gradients per segment, golden center ring, tick marks, idle rocking animation
-- **Film Cards** — Glassmorphism modal with blur backdrop, genre-colored tags, star-animated IMDb rating
-- **Confetti** — 80-piece burst with randomized shapes, colors, drift, and rotation on film reveal
-- **Responsive** — Adapts from mobile (280px wheel) to desktop (460px wheel) using `clamp()` and media queries
+- **Arrière-plan** — Orbes flottants animés (or, violet, cyan) avec un réseau de particules
+- **Roue** — Dégradés radiaux par segment, anneau central doré, graduations, animation de balancement au repos
+- **Cartes film** — Modal glassmorphism avec flou en arrière-plan, tags colorés par genre, note IMDb animée
+- **Confettis** — Explosion de 80 pièces avec formes, couleurs, dérive et rotation aléatoires à chaque révélation
+- **Responsive** — S'adapte du mobile (roue 280px) au desktop (roue 460px) via `clamp()` et media queries
 
-## Getting Started
+## Lancer le projet
 
-No build step, no dependencies — just open it:
+Pas de build, pas de dépendances — il suffit d'ouvrir :
 
 ```bash
-git clone https://github.com/your-username/roue-gpt.git
-cd roue-gpt
-# Open index.html in your browser, or use any local server:
+git clone https://github.com/MathGALIN/roue-GPT.git
+cd roue-GPT
+# Ouvre index.html dans ton navigateur, ou utilise un serveur local :
 npx serve .
 ```
 
-## License
+## Licence
 
 MIT
 
 ---
 
-Built with vanilla JS and a love for cinema.
+Construit en vanilla JS et avec un amour pour le cinéma.
