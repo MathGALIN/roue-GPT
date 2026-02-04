@@ -1810,9 +1810,43 @@ class RoueGPT {
         }
     }
 
+    // ---- Segment click → random film from that genre ----
+    handleCanvasClick(e) {
+        if (this.isSpinning) return;
+
+        const rect = this.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = this.size / 2;
+        const cy = this.size / 2;
+        const dx = x - cx;
+        const dy = y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const outerR = cx - 8;
+        const innerR = 32;
+
+        // Ignore clicks outside the wheel or on center hub
+        if (dist < innerR || dist > outerR) return;
+
+        const segCount = this.segments.length;
+        const arc = (2 * Math.PI) / segCount;
+
+        // Angle of click, adjusted for wheel rotation and top-start offset
+        let angle = Math.atan2(dy, dx) - (this.currentAngle * Math.PI) / 180 + Math.PI / 2;
+        angle = ((angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+
+        const segIndex = Math.floor(angle / arc);
+        const genre = this.segments[segIndex].label;
+        this.selectFilm(genre);
+    }
+
     // ---- Events ----
     bindEvents() {
         this.spinBtn.addEventListener('click', () => this.spin());
+
+        // Click on segment → propose a film from that genre
+        this.canvas.style.cursor = 'pointer';
+        this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
 
         // Resize
         let resizeTimeout;
