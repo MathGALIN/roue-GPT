@@ -1445,25 +1445,16 @@ class RoueGPT {
         this.currentAngle = 0;
         this.confetti = new ConfettiSystem();
 
-        // Segments de la roue
-        this.segments = [
-            { label: 'Sci-fi',      color: '#0096c7' },
-            { label: 'Drame',       color: '#d62839' },
-            { label: 'Thriller',    color: '#e76f51' },
-            { label: 'Horreur',     color: '#7b2d8b' },
-            { label: 'Anime',       color: '#f4508e' },
-            { label: 'Animation',   color: '#3a9fbf' },
-            { label: 'Comédie',     color: '#2a9d8f' },
-            { label: 'Action',      color: '#e63900' },
-            { label: 'Crime',       color: '#264653' },
-            { label: 'Romance',     color: '#c9184a' },
-            { label: 'Fantasy',     color: '#6a30a7' },
-            { label: 'Guerre',      color: '#606c38' },
-            { label: 'Western',     color: '#b5651d' },
-            { label: 'Musical',     color: '#d1198e' },
-            { label: 'Aventure',    color: '#1e8a7a' },
-            { label: 'Historique',  color: '#b8860b' },
+        // Palette de couleurs pour les segments (recyclée si plus de genres que de couleurs)
+        this.segmentColors = [
+            '#0096c7', '#d62839', '#e76f51', '#7b2d8b', '#f4508e',
+            '#3a9fbf', '#2a9d8f', '#e63900', '#264653', '#c9184a',
+            '#6a30a7', '#606c38', '#b5651d', '#d1198e', '#1e8a7a',
+            '#b8860b', '#5b8a9a', '#3a3a4a', '#8b5cf6', '#ef4444',
         ];
+
+        // Segments générés dynamiquement après chargement des films
+        this.segments = [];
 
         // DOM
         this.canvas = document.getElementById('wheel-canvas');
@@ -1516,10 +1507,21 @@ class RoueGPT {
         this.ctx.scale(dpr, dpr);
     }
 
-    // ---- Load films ----
+    // ---- Load films & build segments from genres ----
     async loadFilms() {
         this.films = FILMS_DATA;
         this.availableFilms = [...this.films];
+
+        // Extract unique genres from all films
+        const genreSet = new Set();
+        this.films.forEach(f => f.genres.forEach(g => genreSet.add(g)));
+        const genres = [...genreSet];
+
+        // Build segments dynamically
+        this.segments = genres.map((genre, i) => ({
+            label: genre,
+            color: this.segmentColors[i % this.segmentColors.length],
+        }));
     }
 
     // ---- Draw wheel (Premium version) ----
@@ -1678,8 +1680,9 @@ class RoueGPT {
             const eased = 1 - Math.pow(1 - progress, 5);
             this.currentAngle = startAngle + eased * totalRotation;
 
-            // Pointer tick
-            const normAngle = ((this.currentAngle % 360) + 360) % 360;
+            // Pointer tick — the pointer is at the top (-π/2),
+            // so the segment under the pointer is at angle (-currentAngle)
+            const normAngle = ((-this.currentAngle % 360) + 360) % 360;
             const currentSeg = Math.floor(normAngle / segAngle);
             if (currentSeg !== lastSegIndex) {
                 lastSegIndex = currentSeg;
@@ -1700,7 +1703,7 @@ class RoueGPT {
                 this.setIdle(true);
 
                 // Determine which segment the pointer landed on
-                const finalNorm = ((this.currentAngle % 360) + 360) % 360;
+                const finalNorm = ((-this.currentAngle % 360) + 360) % 360;
                 const finalSeg = Math.floor(finalNorm / segAngle);
                 const selectedGenre = this.segments[finalSeg].label;
 
@@ -1718,16 +1721,8 @@ class RoueGPT {
             return;
         }
 
-        // Map segment labels to possible genre names in film data
-        const genreAliases = {
-            'Sci-fi': ['Sci-fi', 'Science-fiction'],
-            'Comédie': ['Comédie', 'Comédie noire'],
-            'Romance': ['Romance', 'Drame romantique'],
-        };
-
-        const matchGenres = genreAliases[genre] || [genre];
         const filtered = this.availableFilms.filter(f =>
-            f.genres.some(g => matchGenres.includes(g))
+            f.genres.includes(genre)
         );
 
         if (filtered.length === 0) {
@@ -1742,19 +1737,8 @@ class RoueGPT {
 
     // ---- Genre colors ----
     getGenreColor(genre) {
-        const map = {};
-        this.segments.forEach(s => { map[s.label] = s.color; });
-        map['Science-fiction'] = map['Sci-fi'];
-        map['Comédie noire'] = map['Comédie'];
-        map['Drame romantique'] = map['Romance'];
-        map['Documentaire'] = '#5b8a9a';
-        map['Noir'] = '#3a3a4a';
-        map['Essai'] = '#5b8a9a';
-
-        for (const g of Object.keys(map)) {
-            if (genre.toLowerCase().includes(g.toLowerCase())) return map[g];
-        }
-        return '#555';
+        const seg = this.segments.find(s => s.label === genre);
+        return seg ? seg.color : '#555';
     }
 
     // ---- Build & show film card ----
