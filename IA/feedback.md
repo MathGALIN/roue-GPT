@@ -1,7 +1,7 @@
-# Feedback Communauté
+# Feedback Utilisateur
 
 <!--
-  Ajoutez ici les retours de votre communauté sur les films déjà vus.
+  Ajoutez ici vos retours sur les films déjà vus.
   Format suggéré :
 
   ## Session du [DATE]
