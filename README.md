@@ -14,7 +14,7 @@
 ## Fonctionnalités
 
 - **Roue interactive** — Roue rendue en Canvas avec 16 segments de genres, animations fluides et retour sonore du pointeur
-- **100 films sélectionnés** — Pépites triées sur le volet couvrant tous les continents, toutes les époques (1920–2025) et tous les formats (live-action, anime, animation)
+- **100 films sélectionnés** — Pépites triées sur le volet couvrant tous les continents, toutes les époques (1920–aujourd'hui) et tous les formats (live-action, anime, animation)
 - **UI/UX premium** — Design glassmorphism, système de particules flottantes, confettis, et mise en page responsive
 - **Zéro dépendance** — Construit entièrement en HTML5, CSS3 et JavaScript ES6+ vanilla
 - **Retina-ready** — Le rendu Canvas s'adapte aux écrans haute résolution
@@ -89,7 +89,7 @@ La roue se renouvelle automatiquement
 L'IA respecte des **quotas stricts** pour garantir la diversité :
 
 - **50/50** : 50 films live-action, 50 animés (anime + animation)
-- **Couverture temporelle** : de avant 1960 jusqu'à 2025
+- **Couverture temporelle** : de avant 1960 jusqu'à aujourd'hui
 - **30+ pays** représentés sur tous les continents
 - **16 genres** couverts minimum
 - **Adaptation** : si la communauté adore un genre, sa proportion augmente ; si elle en déteste un, il diminue (sans jamais disparaître)

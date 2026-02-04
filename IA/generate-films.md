@@ -8,6 +8,7 @@ Tu es un agent expert en cinéma mondial spécialisé dans les films underground
 
 Lis le fichier `IA/feedback.md`. Ce fichier contient les retours de la communauté sur les films qu'elle a déjà vus lors des sessions précédentes. Analyse attentivement :
 
+- **Les films déjà mentionnés** : extrais la liste complète de tous les films cités dans le feedback (qu'ils aient été aimés ou non). Ces films sont **INTERDITS** dans la nouvelle génération (voir Étape 3).
 - Les genres qui ont plu ou déplu
 - Les époques préférées (films anciens vs récents)
 - La tolérance aux films lents/contemplatifs vs dynamiques
@@ -56,7 +57,7 @@ Génère **exactement 100 films**. Les IDs vont de 1 à 100.
   - 1960-1979 : ~15 films
   - 1980-1999 : ~25 films
   - 2000-2015 : ~30 films
-  - 2016-2025 : ~20 films
+  - 2016-aujourd'hui : ~20 films
 
 - **Types** : répartition 50/50 OBLIGATOIRE
   - Films live action (IRL) : **50 films exactement**
@@ -74,8 +75,13 @@ Génère **exactement 100 films**. Les IDs vont de 1 à 100.
 
 - **Underground mais excellents** : des films qui ne sont PAS des blockbusters mainstream, mais qui sont reconnus par les cinéphiles comme exceptionnels. Évite les films ultra-connus (pas de Pulp Fiction, Fight Club, Inception, Matrix, etc.)
 - **Note minimum** : 6.5/10 sur IMDb (ou équivalent)
+- **VF obligatoire** : chaque film proposé **doit** exister en Version Française (VF). Ne propose pas de film introuvable en VF.
 - **Cultes ou pépites méconnues** : films de festival, films d'auteur, classiques oubliés, chefs-d'œuvre régionaux
 - **Synopsis engageants** : chaque synopsis doit donner envie de voir le film, en expliquant ce qui le rend unique/spécial. Écris en français, 2-3 phrases.
+
+#### Règle d'exclusion OBLIGATOIRE :
+
+- **INTERDIT** : ne propose **JAMAIS** un film qui apparaît dans `IA/feedback.md`, qu'il ait été aimé ou détesté. Un film déjà vu par la communauté ne doit **plus jamais** figurer dans la nouvelle génération. Le but est de toujours proposer des films **inédits** que la communauté n'a pas encore découverts.
 
 #### Adaptation au feedback :
 
@@ -97,10 +103,11 @@ Génère **exactement 100 films**. Les IDs vont de 1 à 100.
 Après avoir écrit le fichier :
 1. Relis `data/films.json` pour vérifier qu'il est valide
 2. Compte le nombre de films — il doit être **exactement 100**
-3. Vérifie la diversité des types (film/anime/animation)
-4. Vérifie la diversité des pays
-5. Vérifie la diversité des époques
-6. Si un critère n'est pas respecté, corrige et réécris le fichier
+3. **Vérifie qu'aucun film du feedback n'est présent** : compare chaque titre de la nouvelle liste avec les films mentionnés dans `IA/feedback.md`. Si un doublon est trouvé, remplace-le par un autre film inédit et réécris le fichier.
+4. Vérifie la diversité des types (film/anime/animation)
+5. Vérifie la diversité des pays
+6. Vérifie la diversité des époques
+7. Si un critère n'est pas respecté, corrige et réécris le fichier
 
 ## Résumé final
 

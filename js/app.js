@@ -1699,21 +1699,44 @@ class RoueGPT {
                 this.spinBtn.querySelector('.spin-btn__text').textContent = 'TOURNER LA ROUE';
                 this.setIdle(true);
 
-                setTimeout(() => this.selectFilm(), 500);
+                // Determine which segment the pointer landed on
+                const finalNorm = ((this.currentAngle % 360) + 360) % 360;
+                const finalSeg = Math.floor(finalNorm / segAngle);
+                const selectedGenre = this.segments[finalSeg].label;
+
+                setTimeout(() => this.selectFilm(selectedGenre), 500);
             }
         };
 
         requestAnimationFrame(animate);
     }
 
-    // ---- Select a random film ----
-    selectFilm() {
+    // ---- Select a random film matching the wheel genre ----
+    selectFilm(genre) {
         if (this.availableFilms.length === 0) {
             this.showEmpty();
             return;
         }
-        const idx = Math.floor(Math.random() * this.availableFilms.length);
-        const film = this.availableFilms[idx];
+
+        // Map segment labels to possible genre names in film data
+        const genreAliases = {
+            'Sci-fi': ['Sci-fi', 'Science-fiction'],
+            'Comédie': ['Comédie', 'Comédie noire'],
+            'Romance': ['Romance', 'Drame romantique'],
+        };
+
+        const matchGenres = genreAliases[genre] || [genre];
+        const filtered = this.availableFilms.filter(f =>
+            f.genres.some(g => matchGenres.includes(g))
+        );
+
+        if (filtered.length === 0) {
+            this.showEmpty();
+            return;
+        }
+
+        const idx = Math.floor(Math.random() * filtered.length);
+        const film = filtered[idx];
         this.showFilmCard(film);
     }
 
