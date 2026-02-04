@@ -5,7 +5,10 @@
       "Bash(git init:*)",
       "Bash(gh auth status:*)",
       "Bash(where:*)",
-      "Bash(powershell.exe -Command \"winget install GitHub.cli --accept-source-agreements --accept-package-agreements\")"
+      "Bash(powershell.exe -Command \"winget install GitHub.cli --accept-source-agreements --accept-package-agreements\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nUI/UX premium upgrade: particules, animations, glassmorphism, confettis\n\n- Background animé avec particules constellation + orbes flottantes\n- Titre GPT avec gradient animé et glow néon\n- Roue améliorée: dégradés, anneau rotatif, glow pulse, idle wobble\n- Flèche avec animation de rebond idle\n- Bouton avec shimmer effect et forme pill\n- Film card glassmorphism avec backdrop-blur et animations staggered\n- Explosion de confettis à la révélation du film\n- Badge \"100 films disponibles\" avec indicateur vert\n- Micro-interactions sur tous les éléments hover\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)"
     ]
   }
 }
